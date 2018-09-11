@@ -1,0 +1,67 @@
+integrate t {ms};
+
+shared V_int {mV};
+shared I_mem {uA/uF};
+shared V_int_init {mV};
+
+shared V_ext {mV};
+shared I_out {mV/ms};
+shared V_ext_init {mV};
+
+shared iStim {uA/uF};
+
+subsystem V {
+  provides diffvar V_int;
+  provides diffvar V_ext;
+
+  V_int.init = V_int_init;
+  V_ext.init = V_ext_init;
+  
+  V_ext.diff = I_mem - I_out;
+  V_int.diff = -I_mem + iStim + V_ext.diff;
+}
+
+subsystem noStim {
+  provides iStim;
+  iStim = 0;
+}
+
+shared bcl_time {ms};
+
+subsystem bcl_time {
+  provides bcl_time;
+
+  @param offset {ms} = 50;
+  @param n {1} = 1;
+  @param bcl {ms} = 1000;
+
+  if (t < offset) {
+     bcl_time = bcl*1000+t-offset;
+  } else { 
+    beat = floor((t-offset)/bcl);
+    if (beat >= n) {
+      beat = n-1;
+    }
+    bcl_time = t-offset - beat*bcl;
+  }
+}
+
+shared stim_time {ms};
+
+subsystem squareStim {
+  @param duration {ms} = 0;
+  @param strength {uA/uF} = 0;
+
+  provides iStim = 0;
+  if (stim_time < duration) {
+     iStim = strength;
+  }
+}
+
+subsystem Compart {
+  use V;
+  use bcl_time;
+  use squareStim {
+    export stim_time as bcl_time;
+  }
+}
