@@ -4,7 +4,6 @@ function U_dydt = MRG_diff(t,y,U_params,activ_params,flux_params,naxons,p,activn
         disp(t);
     end
     p = p +1;
-    
     if naxons >1
               
         % calculate intracompartment diffvars
