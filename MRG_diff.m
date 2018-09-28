@@ -19,7 +19,7 @@ function U_dydt = MRG_diff(t,y,U_params,activ_params,flux_params,naxons,p,activn
         for n = 1:naxons-1
             pas1 = 2+(n-1)*11;
             pas10 = 11+(n-1)*11;
-            diff_U(1,pas1:pas10) = c.*(U_vars(2,pas1:pas10)-U_vars(1,pas1:pas10)+80)-10.*(U_vars(1,pas1:pas10));
+            diff_U(1,pas1:pas10) = -c.*(U_vars(2,pas1:pas10)-U_vars(1,pas1:pas10)+80)-10.*(U_vars(1,pas1:pas10));
             diff_U(2,pas1:pas10) = -10*(U_vars(1,pas1:pas10));
             if n+1 == activn
                 diff_U(1:6,12+(n-1)*11) = AxonNode_Compart(t,U_vars(1:6,1+n*11),activ_params);
@@ -28,7 +28,7 @@ function U_dydt = MRG_diff(t,y,U_params,activ_params,flux_params,naxons,p,activn
             end
         end
         
-        % calculate intercompartment flux
+        % copy intercompartment flux
         ext_taus = flux_params.ext_taus;
         int_taus = flux_params.int_taus;
         %ext_taus = ext_taus(1).*ones(size(ext_taus));

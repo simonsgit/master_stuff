@@ -75,7 +75,7 @@ function U_dydt = AxonNode_Compart(t,U_diffvars,varargin)
    if (isfield(U_params, 'strength'))
       strength = U_params.strength;
    else
-      strength = 2000;
+      strength = 0;
       U_params.strength = strength;
    end
    iStim = 0;
@@ -142,8 +142,11 @@ function U_dydt = AxonNode_Compart(t,U_diffvars,varargin)
    MRGHH_I_mem_area = I_mem_area + leakage_current_I_mem_area + pers_sodium_channel_I_mem_area + slow_potassium_channel_I_mem_area;
    I_mem = MRGHH_I_mem_area./Cm;
    I_mem_001 = I_mem;
-   V_ext_diff = 0;
+   V_ext_diff = I_mem_001 - I_out_001;
    V_int_diff = V_ext_diff - I_mem_001 + iStim_001;
+   if t == 50
+       disp(t);
+   end
    % stuff the differential update into an array
    U_dydt(1) = V_ext_diff;
    U_dydt(2) = V_int_diff;

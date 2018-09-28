@@ -33,7 +33,7 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params] = MRG_init(t,na
         etaus = vertcat(etaus,repmat(etaus(3:end),naxons-2,1));
         flux_params = struct();
         flux_params.int_taus = itaus;
-        flux_params.ext_taus = etaus;
+        flux_params.ext_taus = etaus.*100;
         
     else
         U_y_init = U_axon;
@@ -43,9 +43,9 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params] = MRG_init(t,na
     activ_params = struct();
     Cm = 2;
     activ_params.Cm = Cm;
-    g_L = 20;
+    g_L = 7;
     activ_params.g_L = g_L;
-    offset = 1;
+    offset = 50;
     activ_params.offset = offset;
     bcl = 1000;
     activ_params.bcl = bcl;

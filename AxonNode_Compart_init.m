@@ -24,7 +24,7 @@ function [U_y_init, U_ordering, U_params] = AxonNode_Compart_init(t,varargin)
    if (isfield(U_params, 'g_L'))
       g_L = U_params.g_L;
    else
-      g_L = 20;
+      g_L = 7;
       U_params.g_L = g_L;
    end
    p_init = 0.202600000000000;
