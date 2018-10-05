@@ -111,7 +111,7 @@ function gen_tissue(NoF, NoA, ndiam, fdiam, adiam)
     
     astring = strcat(astring, '};\n');
     disp(axon_x);
-    fid = fopen( '/Users/st18/tissue.geo', 'wt');
+    fid = fopen( '/Users/st18/MasterThesis/master_stuff/tissue.geo', 'wt');
     fprintf(fid, '// Fascicle Parameters\n');
     fprintf(fid, 'NoF = %f;\n',NoF);
     fprintf(fid, 'fasc_msh = 1;\n');

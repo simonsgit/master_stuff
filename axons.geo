@@ -1,7 +1,7 @@
 // Gmsh project created on Tue Sep 25 11:32:57 2018
 SetFactory("OpenCASCADE");
 
-Include "/Users/st18/tissue.geo";
+Include "/Users/st18/MasterThesis/master_stuff/tissue.geo";
 //+
 
 // Generate Electrode
@@ -114,15 +114,3 @@ Plane Surface(w) = {peri_sur[]};
 epi[] = Extrude {0, 0, axon_h} {Surface{w};};
 Physical Volume("Epineurium", newv) = {epi[1]};
 
-//+
-Recursive Delete {
-  Line{6}; 
-}
-//+
-Recursive Delete {
-  Line{6}; Line{5}; Line{8}; Line{7}; 
-}
-//+
-Recursive Delete {
-  Line{6}; Line{5}; 
-}
