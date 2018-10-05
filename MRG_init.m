@@ -32,8 +32,8 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params] = MRG_init(t,na
         etaus = (1e-3.*(2*l).^2 .*Ra_n .*ce.*de)./(de.^2-d.^2);
         etaus = vertcat(etaus,repmat(etaus(3:end),naxons-2,1));
         flux_params = struct();
-        flux_params.int_taus = itaus;
-        flux_params.ext_taus = etaus.*100;
+        flux_params.int_taus = vertcat((itaus(1)+itaus(2))./2, (itaus(2:end) + itaus(1:end-1))./2);
+        flux_params.ext_taus = vertcat((etaus(1)+etaus(2))./2, (etaus(2:end) + etaus(1:end-1))./2);
         
     else
         U_y_init = U_axon;
@@ -49,7 +49,7 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params] = MRG_init(t,na
     activ_params.offset = offset;
     bcl = 1000;
     activ_params.bcl = bcl;
-    duration = 0.1;
+    duration = 1;
     activ_params.duration = duration;
     strength = 2000;
     activ_params.strength = strength;

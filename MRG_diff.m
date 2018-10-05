@@ -19,8 +19,8 @@ function U_dydt = MRG_diff(t,y,U_params,activ_params,flux_params,naxons,p,activn
         for n = 1:naxons-1
             pas1 = 2+(n-1)*11;
             pas10 = 11+(n-1)*11;
-            diff_U(1,pas1:pas10) = -c.*(U_vars(2,pas1:pas10)-U_vars(1,pas1:pas10)+80)-10.*(U_vars(1,pas1:pas10));
-            diff_U(2,pas1:pas10) = -10*(U_vars(1,pas1:pas10));
+            diff_U(1,pas1:pas10) = c.*(U_vars(2,pas1:pas10)-U_vars(1,pas1:pas10)+80)-10.*(U_vars(1,pas1:pas10));
+            diff_U(2,pas1:pas10) = -10.*(U_vars(1,pas1:pas10));
             if n+1 == activn
                 diff_U(1:6,12+(n-1)*11) = AxonNode_Compart(t,U_vars(1:6,1+n*11),activ_params);
             else
@@ -51,5 +51,7 @@ function U_dydt = MRG_diff(t,y,U_params,activ_params,flux_params,naxons,p,activn
     else
         U_dydt = AxonNode_Compart(t,y,activ_params);
     end
-
+    if t > 50.05
+        disp(t);
+    end
 end

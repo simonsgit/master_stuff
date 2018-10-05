@@ -29,7 +29,7 @@ function U_dydt = AxonNode_Compart(t,U_diffvars,varargin)
    if (isfield(U_params, 'g_L'))
       g_L = U_params.g_L;
    else
-      g_L = 20;
+      g_L = 7;
       U_params.g_L = g_L;
    end
    g_Nap = 10;
