@@ -19,9 +19,32 @@ Circle(b+3) = {a+4, a, a+1};
 Line Loop(b+4) = {b, b+1, b+2, b+3};
 c = newc;
 Plane Surface(c) = {b+4};
-surf[] = Translate {0,2,0} {Duplicata {Surface{c};}};
+points[] = Translate {0,50,0} {Duplicata {Point{a};Point{a+1};Point{a+2};Point{a+3};Point{a+4};}};
+circles[] = Translate {0,50,0} {Duplicata {Line{b};Line{b+1};Line{b+2};Line{b+3};}};
+surface[] = Translate {0,50,0} {Duplicata {Surface{c};}};
+d = newc;
+Line(d) = {a+1, points[1]};
+Line(d+1) = {a+2, points[2]};
+Line(d+2) = {a+3, points[3]};
+Line(d+3) = {a+4, points[4]};
+
+e = newc; 
+Line Loop(e) = {b, d+1, -circles[0], -d};
+Line Loop(e+1) = {b+1, d+2, -circles[1], -(d+1)};
+Line Loop(e+2) = {b+2, d+3, -circles[2], -(d+2)};
+Line Loop(e+3) = {b+3, d, -circles[3], -(d+3)};
+
+f = news;
+Surface(f) = {e};
+Surface(f+1) = {e+1};
+Surface(f+2) = {e+2};
+Surface(f+3) = {e+3};
+
+Surface Loop(f+4) = {c, f, f+1, f+2, f+3, surface[0]};
+g = newv;
+Volume(g) = {f+4};
 //elec[] = Extrude {elec_extr[0], elec_extr[1], elec_extr[2]} {Surface{c};};
-//Physical Volume("Electrode", newv) = {elec[1]};
+Physical Volume("Electrode", newv) = {g};
 
 For m In {1:NoF}
 	Printf("Fascicle No. %g", m);
@@ -84,6 +107,9 @@ For m In {1:NoF}
 	Plane Surface(t) = {s+4,p+4};
 	peri_sur[m] = s+4;
 	peri[] = Extrude {0, 0, axon_h} {Surface{t};};
+	k = newreg;
+	Surface Loop(t+1) = {t, peri[0], peri[2], peri[3], peri[4], peri[5], peri[6] ,peri[7] ,peri[8], peri[9]};
+	peri_loo[m-1] = t+1;
 	peri_vol[m] = peri[1];
 	
 EndFor
@@ -95,7 +121,7 @@ Physical Volume("Perineurium", newv) = {peri_vol[]};
 //Generate Epineurium
 epi_xyz[] = {0,0,0};
 epi_rad = 50;
-epi_msh = 0.1;
+epi_msh = 5;
 u = newp;
 Point(u) = {epi_xyz[0], epi_xyz[1], epi_xyz[2], epi_msh};
 Point(u+1) = {epi_xyz[0], epi_xyz[1]+epi_rad, epi_xyz[2], epi_msh};
@@ -111,6 +137,30 @@ Line Loop(v+4) = {v, v+1, v+2, v+3};
 w = newc;
 peri_sur[0] = v+4;
 Plane Surface(w) = {peri_sur[]};
-epi[] = Extrude {0, 0, axon_h} {Surface{w};};
-Physical Volume("Epineurium", newv) = {epi[1]};
+npoints[] = Translate {0,0,axon_h} {Duplicata {Point{u};Point{u+1};Point{u+2};Point{u+3};Point{u+4};}};
+ncircles[] = Translate {0,0,axon_h} {Duplicata {Line{v};Line{v+1};Line{v+2};Line{v+3};}};
+nsurface[] = Translate {0,0,axon_h} {Duplicata {Surface{w};}};
 
+x = newc;
+Line(x) = {u+1, npoints[1]};
+Line(x+1) = {u+2, npoints[2]};
+Line(x+2) = {u+3, npoints[3]};
+Line(x+3) = {u+4, npoints[4]};
+
+y = newc; 
+Line Loop(y) = {v, x+1, -ncircles[0], -x};
+Line Loop(y+1) = {v+1, x+2, -ncircles[1], -(x+1)};
+Line Loop(y+2) = {v+2, x+3, -ncircles[2], -(x+2)};
+Line Loop(y+3) = {v+3, x, -ncircles[3], -(x+3)};
+
+z = news;
+Surface(z) = {y};
+Surface(z+1) = {y+1};
+Surface(z+2) = {y+2};
+Surface(z+3) = {y+3};
+
+//Surface Loop(z+4) = {c, z, z+1, z+2, z+3, nsurface[0]};
+Surface Loop(z+4) = {963, 964, 1022, 1023, 1024, 1025};
+h = newv;
+Volume(h) = {z+4, f+4, peri_loo[]};
+Physical Volume("Epineurium", newv) = {h};
