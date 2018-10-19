@@ -18,41 +18,41 @@ function U_dydt = AxonNode_Compart(t,U_diffvars,varargin)
    % define the differential update
    E_R = -80;
    E_Na = E_R + 130;
-   if (isfield(U_params, 'Cm'))
+   %if (isfield(U_params, 'Cm'))
       Cm = U_params.Cm;
-   else
-      Cm = 2;
-      U_params.Cm = Cm;
-   end
+   %else
+   %   Cm = 2;
+   %   U_params.Cm = Cm;
+   %end
    g_Naf = 3000;
    E_L = E_R - 10;
-   if (isfield(U_params, 'g_L'))
+   %if (isfield(U_params, 'g_L'))
       g_L = U_params.g_L;
-   else
-      g_L = 7;
-      U_params.g_L = g_L;
-   end
+   %else
+   %   g_L = 7;
+   %   U_params.g_L = g_L;
+   %end
    g_Nap = 10;
    E_K = E_R - 10;
    g_K = 80;
-   if (isfield(U_params, 'offset'))
+   %if (isfield(U_params, 'offset'))
       offset = U_params.offset;
-   else
-      offset = 50;
-      U_params.offset = offset;
-   end
-   if (isfield(U_params, 'n'))
+   %else
+   %   offset = 50;
+   %   U_params.offset = offset;
+   %end
+   %if (isfield(U_params, 'n'))
       n = U_params.n;
-   else
-      n = 1;
-      U_params.n = n;
-   end
-   if (isfield(U_params, 'bcl'))
+   %else
+   %   n = 1;
+   %   U_params.n = n;
+   %end
+   %if (isfield(U_params, 'bcl'))
       bcl = U_params.bcl;
-   else
-      bcl = 1000;
-      U_params.bcl = bcl;
-   end
+   %else
+   %   bcl = 1000;
+   %   U_params.bcl = bcl;
+   %end
    U__melodee_temp_011 = t < offset;
    if (U__melodee_temp_011)
       bcl_time = 1000*bcl - offset + t;
@@ -66,18 +66,18 @@ function U_dydt = AxonNode_Compart(t,U_diffvars,varargin)
       end
       bcl_time = -bcl.*bcl_time_beat - offset + t;
    end
-   if (isfield(U_params, 'duration'))
+   %if (isfield(U_params, 'duration'))
       duration = U_params.duration;
-   else
-      duration = 0;
-      U_params.duration = duration;
-   end
-   if (isfield(U_params, 'strength'))
+   %else
+   %   duration = 0;
+   %   U_params.duration = duration;
+   %end
+   %if (isfield(U_params, 'strength'))
       strength = U_params.strength;
-   else
-      strength = 2000;
-      U_params.strength = strength;
-   end
+   %else
+   %   strength = 2000;
+   %   U_params.strength = strength;
+   %end
    iStim = 0;
    U__melodee_temp_012 = bcl_time < duration;
    if (U__melodee_temp_012)
@@ -142,7 +142,7 @@ function U_dydt = AxonNode_Compart(t,U_diffvars,varargin)
    MRGHH_I_mem_area = I_mem_area + leakage_current_I_mem_area + pers_sodium_channel_I_mem_area + slow_potassium_channel_I_mem_area;
    I_mem = MRGHH_I_mem_area./Cm;
    I_mem_001 = I_mem;
-   V_ext_diff = 0;
+   V_ext_diff = -1e13/2 * V_ext;
    V_int_diff = V_ext_diff - I_mem_001 + iStim_001;
    % stuff the differential update into an array
    U_dydt(1) = V_ext_diff;

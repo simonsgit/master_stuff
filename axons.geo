@@ -3,6 +3,11 @@ SetFactory("OpenCASCADE");
 
 Include "/Users/st18/MasterThesis/master_stuff/tissue.geo";
 //+
+elec_msh = 1;
+axon_msh = 1;
+fasc_msh = 2;
+peri_msh = 2;
+epi_msh = 5;
 
 // Generate Electrode
 a = newp;
@@ -19,9 +24,10 @@ Circle(b+3) = {a+4, a, a+1};
 Line Loop(b+4) = {b, b+1, b+2, b+3};
 c = newc;
 Plane Surface(c) = {b+4};
-points[] = Translate {0,50,0} {Duplicata {Point{a};Point{a+1};Point{a+2};Point{a+3};Point{a+4};}};
-circles[] = Translate {0,50,0} {Duplicata {Line{b};Line{b+1};Line{b+2};Line{b+3};}};
-surface[] = Translate {0,50,0} {Duplicata {Surface{c};}};
+points[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicata {Point{a};Point{a+1};Point{a+2};Point{a+3};Point{a+4};}};
+circles[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicata {Line{b};Line{b+1};Line{b+2};Line{b+3};}};
+surface[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicata {Surface{c};}};
+
 d = newc;
 Line(d) = {a+1, points[1]};
 Line(d+1) = {a+2, points[2]};
@@ -39,7 +45,6 @@ Surface(f) = {e};
 Surface(f+1) = {e+1};
 Surface(f+2) = {e+2};
 Surface(f+3) = {e+3};
-
 Surface Loop(f+4) = {c, f, f+1, f+2, f+3, surface[0]};
 g = newv;
 Volume(g) = {f+4};
@@ -51,18 +56,22 @@ For m In {1:NoF}
 	For n In {1:NoA}
 		i = newp;
 		//Printf("Point no. %g", i);
-		Point(i) = {fasc_x[m]+axon_x[(m-1)*NoA+n], fasc_y[m]+axon_y[(m-1)*NoA+n]+axon_rad[(m-1)*NoA+n], fasc_z[m]+axon_z[(m-1)*NoA+n], axon_msh};
-		Point(i+1) = {fasc_x[m]+axon_x[(m-1)*NoA+n], fasc_y[m]+axon_y[(m-1)*NoA+n], fasc_z[m]+axon_z[(m-1)*NoA+n], axon_msh};
-		Point(i+2) = {fasc_x[m]+axon_x[(m-1)*NoA+n], fasc_y[m]+axon_y[(m-1)*NoA+n]-axon_rad[(m-1)*NoA+n], fasc_z[m]+axon_z[(m-1)*NoA+n], axon_msh};
+		Point(i) = {fasc_x[m]+axon_x[(m-1)*NoA+n], fasc_y[m]+axon_y[(m-1)*NoA+n], fasc_z[m]+axon_z[(m-1)*NoA+n], axon_msh};
+		Point(i+1) = {fasc_x[m]+axon_x[(m-1)*NoA+n], fasc_y[m]+axon_y[(m-1)*NoA+n]+axon_rad[(m-1)*NoA+n], fasc_z[m]+axon_z[(m-1)*NoA+n], axon_msh};
+		Point(i+2) = {fasc_x[m]+axon_x[(m-1)*NoA+n]+axon_rad[(m-1)*NoA+n], fasc_y[m]+axon_y[(m-1)*NoA+n], fasc_z[m]+axon_z[(m-1)*NoA+n], axon_msh};
+		Point(i+3) = {fasc_x[m]+axon_x[(m-1)*NoA+n], fasc_y[m]+axon_y[(m-1)*NoA+n]-axon_rad[(m-1)*NoA+n], fasc_z[m]+axon_z[(m-1)*NoA+n], axon_msh};
+		Point(i+4) = {fasc_x[m]+axon_x[(m-1)*NoA+n]-axon_rad[(m-1)*NoA+n], fasc_y[m]+axon_y[(m-1)*NoA+n], fasc_z[m]+axon_z[(m-1)*NoA+n], axon_msh};
 		j = newc;
 		//Printf("Line no. %g", j);
-		Circle(j) = {i, i+1, i+2};
-		Circle(j+1) = {i+2, i+1, i};
-		Line Loop(j+2) = {j, j+1};
+		Circle(j) = {i+1, i, i+2};
+		Circle(j+1) = {i+2, i, i+3};
+		Circle(j+2) = {i+3, i, i+4};
+		Circle(j+3) = {i+4, i, i+1};
+		Line Loop(j+4) = {j, j+1, j+2, j+3};
 		k = news;
-		Plane Surface(k) = {j+2};
-		axon[] = Extrude {0, 0, axon_h} {Surface{k}; Layers{axon_lay}; };
-		axon_loops[n-1] = j+2;
+		Plane Surface(k) = {j+4};
+		axon[] = Extrude {0, 0, axon_h} {Surface{k}; Layers{ {1,1,1,6,1,1,1}, {0.5/1150,3.5/1150,49.5/1150,1099.5/1150,1145.5/1150,1148.5/1150,1} }; };
+		axon_loops[n-1] = j+4;
 		axon_vol[(m-1)*NoA+n] = axon[1];
 		//Printf("vol %g", axon[1]);
 	EndFor
@@ -71,10 +80,10 @@ For m In {1:NoF}
 	o = newp;
 	//+
 	Point(o) = {fasc_x[m], fasc_y[m], fasc_z[m], fasc_msh};
-	Point(o+1) = {fasc_x[m], fasc_y[m]+fasc_rad, fasc_z[m], fasc_msh};
-	Point(o+2) = {fasc_x[m]+fasc_rad, fasc_y[m], fasc_z[m], fasc_msh};
-	Point(o+3) = {fasc_x[m], fasc_y[m]-fasc_rad, fasc_z[m], fasc_msh};
-	Point(o+4) = {fasc_x[m]-fasc_rad, fasc_y[m], fasc_z[m], fasc_msh};
+	Point(o+1) = {fasc_x[m], fasc_y[m]+fasc_rad[m], fasc_z[m], fasc_msh};
+	Point(o+2) = {fasc_x[m]+fasc_rad[m], fasc_y[m], fasc_z[m], fasc_msh};
+	Point(o+3) = {fasc_x[m], fasc_y[m]-fasc_rad[m], fasc_z[m], fasc_msh};
+	Point(o+4) = {fasc_x[m]-fasc_rad[m], fasc_y[m], fasc_z[m], fasc_msh};
 	p = newc;
 	Circle(p) = {o+1, o, o+2};
 	Circle(p+1) = {o+2, o, o+3};
@@ -88,15 +97,15 @@ For m In {1:NoF}
 	
 
 	//Generate Perineurium
-	peri_d = fasc_rad*3/100;
-	peri_msh = 0.1;
+	peri_d = fasc_rad[m]*3/100;
+	peri_msh = 1;
 	r = newp;
 	//+
 	Point(r) = {fasc_x[m], fasc_y[m], fasc_z[m], peri_msh};
-	Point(r+1) = {fasc_x[m], fasc_y[m]+fasc_rad+peri_d, fasc_z[m], peri_msh};
-	Point(r+2) = {fasc_x[m]+fasc_rad+peri_d, fasc_y[m], fasc_z[m], peri_msh};
-	Point(r+3) = {fasc_x[m], fasc_y[m]-fasc_rad-peri_d, fasc_z[m], peri_msh};
-	Point(r+4) = {fasc_x[m]-fasc_rad-peri_d, fasc_y[m], fasc_z[m], peri_msh};
+	Point(r+1) = {fasc_x[m], fasc_y[m]+fasc_rad[m]+peri_d, fasc_z[m], peri_msh};
+	Point(r+2) = {fasc_x[m]+fasc_rad[m]+peri_d, fasc_y[m], fasc_z[m], peri_msh};
+	Point(r+3) = {fasc_x[m], fasc_y[m]-fasc_rad[m]-peri_d, fasc_z[m], peri_msh};
+	Point(r+4) = {fasc_x[m]-fasc_rad[m]-peri_d, fasc_y[m], fasc_z[m], peri_msh};
 	s = newc;
 	Circle(s) = {r+1, r, r+2};
 	Circle(s+1) = {r+2, r, r+3};
@@ -105,13 +114,18 @@ For m In {1:NoF}
 	Line Loop(s+4) = {s, s+1, s+2, s+3};
 	t = newc;
 	Plane Surface(t) = {s+4,p+4};
+	//Plane Surface(t+1) = {s+4};
+	//nsurface[] = Translate {0,0,axon_h} {Duplicata {Surface{t+1};}};
+	//Printf(" nsurface %g", nsurface[0]);
 	peri_sur[m] = s+4;
 	peri[] = Extrude {0, 0, axon_h} {Surface{t};};
-	k = newreg;
-	Surface Loop(t+1) = {t, peri[0], peri[2], peri[3], peri[4], peri[5], peri[6] ,peri[7] ,peri[8], peri[9]};
-	peri_loo[m-1] = t+1;
+	//Surface Loop(t+2) = {peri[2], peri[3], peri[4], peri[5]};
+	peri_wal[(m-1)*4] = peri[2];
+	peri_wal[(m-1)*4+1] = peri[3];
+	peri_wal[(m-1)*4+2] = peri[4];
+	peri_wal[(m-1)*4+3] = peri[5]; 
+	//peri_loo[m-1] = t+2;
 	peri_vol[m] = peri[1];
-	
 EndFor
 
 Physical Volume("Axons", newv) = {axon_vol[]};
@@ -120,8 +134,7 @@ Physical Volume("Perineurium", newv) = {peri_vol[]};
 
 //Generate Epineurium
 epi_xyz[] = {0,0,0};
-epi_rad = 50;
-epi_msh = 5;
+epi_rad = 10;
 u = newp;
 Point(u) = {epi_xyz[0], epi_xyz[1], epi_xyz[2], epi_msh};
 Point(u+1) = {epi_xyz[0], epi_xyz[1]+epi_rad, epi_xyz[2], epi_msh};
@@ -158,9 +171,11 @@ Surface(z) = {y};
 Surface(z+1) = {y+1};
 Surface(z+2) = {y+2};
 Surface(z+3) = {y+3};
+Printf(" epi %g", z);
+Printf(" epi %g", z+1);
+Printf(" epi %g", z+2);
 
-//Surface Loop(z+4) = {c, z, z+1, z+2, z+3, nsurface[0]};
-Surface Loop(z+4) = {963, 964, 1022, 1023, 1024, 1025};
+Surface Loop(z+4) = {w, z, z+1, z+2, z+3, nsurface[0], peri_wal[]};
 h = newv;
-Volume(h) = {z+4, f+4, peri_loo[]};
+Volume(h) = {z+4, f+4};
 Physical Volume("Epineurium", newv) = {h};
