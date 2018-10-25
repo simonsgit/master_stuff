@@ -2,7 +2,7 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params,intracom_params]
     [U_axon, U_ordering, U_params] = AxonNode_Compart_init(t);
     
     if naxons > 1
-        add_axon = horzcat(repmat([0;-80;0;0;0;0],1,10),U_axon);
+        add_axon = horzcat(repmat([0;-90;0;0;0;0],1,10),U_axon);
         U_y_init = horzcat(U_axon,repmat(add_axon,1,naxons-1));
         
         % calculate flux parameters
@@ -52,8 +52,8 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params,intracom_params]
         gpas_s = 0.1 * 3.3/10;
         gpas = [gpas_m;gpas_f;gpas_s;gpas_s;gpas_s;gpas_s;gpas_s;gpas_s;gpas_f;gpas_m];
         intracom_params = struct();
-        intracom_params.ext = (1/240)./(cm(2:end-2).*2e8 + (0.1/240)); 
-        intracom_params.int = gpas./(cm(2:end-2).*2e8);
+        intracom_params.ext = (1/240) ./ (cm(2:end-2) .* 2e8 + (0.1/240)); 
+        intracom_params.int = gpas ./ (cm(2:end-2) .* 2e8);
     else
         U_y_init = U_axon;
         flux_params = 0;

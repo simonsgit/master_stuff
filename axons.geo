@@ -4,9 +4,9 @@ SetFactory("OpenCASCADE");
 Include "/Users/st18/MasterThesis/master_stuff/tissue.geo";
 //+
 elec_msh = 1;
-axon_msh = 1;
-fasc_msh = 2;
-peri_msh = 2;
+axon_msh = 0.5;
+fasc_msh = 0.5;
+peri_msh = 1;
 epi_msh = 5;
 
 // Generate Electrode
@@ -98,7 +98,7 @@ For m In {1:NoF}
 
 	//Generate Perineurium
 	peri_d = fasc_rad[m]*3/100;
-	peri_msh = 1;
+	peri_msh = peri_d/2;
 	r = newp;
 	//+
 	Point(r) = {fasc_x[m], fasc_y[m], fasc_z[m], peri_msh};
