@@ -1,0 +1,88 @@
+integrate time {ms};
+
+shared V_int {mV};
+shared I_mem {uA/uF};
+shared V_int_init {mV};
+
+shared V_ext {mV}; 
+shared I_out {mV/ms};
+shared V_ext_init {mV};
+
+shared E_Na {mV};
+subsystem MRGHH {
+   provides V_diff {mV} = V_int - V_ext;
+   shared I_mem_area {uA/cm^2};
+   provides E_R {mV} = -80;
+   provides E_Na {mV} = (E_R+130{mV});
+   subsystem leakage_current {
+      E_L {mV} = (E_R-10{mV});
+      @param g_L {mS/cm^2} = 20;
+      i_L {uA/cm^2} = g_L*(V_diff-E_L);
+      provides accum I_mem_area += i_L;
+   }
+   subsystem slow_potassium_channel {
+      shared s {1};
+      subsystem slow_potassium_channel_s_gate {
+         provides diffvar s {1};
+         alpha_s {1/ms} = 0.3348{1/ms}/(1+exp((V_diff+53{mV})/(-5{mV})));
+         beta_s {1/ms} = 0.03348{1/ms}/(1+exp((V_diff+90{mV})/(-1{mV})));
+         s.init = 0.0430;
+         s.diff = (alpha_s*(1-s)-beta_s*s);
+      }
+      E_K {mV} = (E_R-10{mV});
+      g_K {mS/cm^2} = 80;
+      i_K {uA/cm^2} = g_K*s*(V_diff-E_K);
+      provides accum I_mem_area += i_K;
+   }
+
+   subsystem fast_sodium_channel {
+      shared m {1};
+      shared h {1};
+      subsystem sodium_channel_m_gate {
+         provides diffvar m {1};
+         alpha_m {1/ms} = (fabs(-(V_diff+21.4{mV})/10.3{mV}) < 0.000001) ? (7.11{1/mV/ms}*10.3{mV}) : (7.11{1/mV/ms}*(V_diff+21.4{mV})/(1{1}-exp(-(V_diff+21.4{mV})/10.3{mV})));
+         beta_m {1/ms} = (fabs((V_diff+25.7{mV})/9.16{mV}) < 0.000001) ? (0.329{1/mV/ms}*9.16{mV}) : (0.329{1/mV/ms}*(-(V_diff+25.7{mV}))/(1{1}-exp((V_diff+25.7{mV})/9.16{mV})));
+         m.init = 0.0732;
+         m.diff = (alpha_m*(1-m)-beta_m*m);
+      }
+      subsystem sodium_channel_h_gate {
+         provides diffvar h {1};
+         alpha_h {1/ms} = (fabs((V_diff+114{mV})/11{mV}) < 0.000001) ? (0.38{1/mV/ms}*11{mV}) : (0.38{1/mV/ms}*(-(V_diff+114{mV}))/(1{1}-exp((V_diff+114{mV})/11{mV})));
+         beta_h {1/ms} = 14.1{1/ms}/(1{1}+exp((V_diff+31.8{mV})/(-13.4{mV})));
+         h.init = 0.6207;
+         h.diff = (alpha_h*(1-h)-beta_h*h);
+      }
+      g_Naf {mS/cm^2} = 3000;
+      i_Naf {uA/cm^2} = g_Naf*m^3*h*(V_diff-E_Na);
+      provides accum I_mem_area += i_Naf;
+   }
+   
+   subsystem pers_sodium_channel {
+      shared p {1};
+      subsystem pers_sodium_channel_p_gate {
+         provides diffvar p {1};
+         alpha_p {1/ms} = (fabs((V_diff+27{mV})/10.2{mV}) < 0.000001{1}) ? (0.0382{1/mV/ms}*10.2{mV}) : (0.0382{1/mV/ms}*(V_diff+27{mV})/(1{1}-exp(-(V_diff+27{mV})/10.2{mV}))) ;
+         beta_p {1/ms} = (fabs((V_diff+34{mV})/10{mV}) < 0.000001{1}) ? (0.000955{1/mV/ms}*10{mV}) : (0.000955{1/mV/ms}*(-(V_diff+34{mV}))/(1{1}-exp((V_diff+34{mV})/10{mV})));
+         p.init = 0.2026;
+         p.diff = (alpha_p*(1-p)-beta_p*p);
+      }
+      g_Nap {mS/cm^2} = 10;
+      i_Nap {uA/cm^2} = g_Nap*p^3*(V_diff-E_Na);
+      provides accum I_mem_area += i_Nap;
+   }
+
+   provides V_ext_init = 0;
+   provides V_int_init = V_ext_init - 80;
+   @param Cm {uF/cm^2} = 2;
+   provides accum I_mem += I_mem_area/Cm;
+   
+}
+
+subsystem nodal_current{
+   provides accum I_out {mV/ms} += V_ext*1000;
+}
+
+subsystem AxonNode {
+  use MRGHH;
+  use nodal_current;
+}

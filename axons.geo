@@ -7,7 +7,7 @@ elec_msh = 1;
 axon_msh = 0.5;
 fasc_msh = 0.5;
 peri_msh = 1;
-epi_msh = 5;
+epi_msh = 1;
 
 // Generate Electrode
 a = newp;

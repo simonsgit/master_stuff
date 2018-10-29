@@ -86,64 +86,64 @@ function U_dydt = AxonNode_Compart(t,U_diffvars,varargin)
    else
       iStim_001 = iStim;
    end
-   V_diff = -V_ext + V_int;
-   i_Naf = m.^3.*g_Naf.*h.*(V_diff - E_Na);
+   %V_diff = -V_ext + V_int;
+   i_Naf = m.^3.*g_Naf.*h.*(V_int - E_Na);
    I_mem_area = i_Naf;
-   U__melodee_temp_004 = abs(V_diff/11 + 114/11) < 1.0e-6;
+   U__melodee_temp_004 = abs(V_int/11 + 114/11) < 1.0e-6;
    if (U__melodee_temp_004)
       U__melodee_temp_005 = 4.18000000000000;
    else
-      U__melodee_temp_005 = (-0.38*V_diff - 43.32)./(-exp(V_diff/11 + 114/11) + 1);
+      U__melodee_temp_005 = (-0.38*V_int - 43.32)./(-exp(V_int/11 + 114/11) + 1);
    end
    alpha_h = U__melodee_temp_005;
-   beta_h = 14.1./(1 + 0.0931881856853705*exp(-0.0746268656716418*V_diff));
+   beta_h = 14.1./(1 + 0.0931881856853705*exp(-0.0746268656716418*V_int));
    h_diff = -h.*beta_h + alpha_h.*(-h + 1);
-   U__melodee_temp_000 = abs(0.0970873786407767*V_diff + 2.07766990291262) < 1.0e-6;
+   U__melodee_temp_000 = abs(0.0970873786407767*V_int + 2.07766990291262) < 1.0e-6;
    if (U__melodee_temp_000)
       U__melodee_temp_001 = 73.2330000000000;
    else
-      U__melodee_temp_001 = (7.11*V_diff + 152.154)./(1 - 0.125221651130795*exp(-0.0970873786407767*V_diff));
+      U__melodee_temp_001 = (7.11*V_int + 152.154)./(1 - 0.125221651130795*exp(-0.0970873786407767*V_int));
    end
    alpha_m = U__melodee_temp_001;
-   U__melodee_temp_002 = abs(0.109170305676856*V_diff + 2.8056768558952) < 1.0e-6;
+   U__melodee_temp_002 = abs(0.109170305676856*V_int + 2.8056768558952) < 1.0e-6;
    if (U__melodee_temp_002)
       U__melodee_temp_003 = 3.01364000000000;
    else
-      U__melodee_temp_003 = (-0.329*V_diff - 8.4553)./(-16.5382661414812*exp(0.109170305676856*V_diff) + 1);
+      U__melodee_temp_003 = (-0.329*V_int - 8.4553)./(-16.5382661414812*exp(0.109170305676856*V_int) + 1);
    end
    beta_m = U__melodee_temp_003;
    m_diff = -m.*beta_m + alpha_m.*(-m + 1);
-   i_L = g_L.*(V_diff - E_L);
+   i_L = g_L.*(V_int - E_L);
    leakage_current_I_mem_area = i_L;
-   i_Nap = p.^3.*g_Nap.*(V_diff - E_Na);
+   i_Nap = p.^3.*g_Nap.*(V_int - E_Na);
    pers_sodium_channel_I_mem_area = i_Nap;
-   U__melodee_temp_006 = abs(0.0980392156862745*V_diff + 2.64705882352941) < 1.0e-6;
+   U__melodee_temp_006 = abs(0.0980392156862745*V_int + 2.64705882352941) < 1.0e-6;
    if (U__melodee_temp_006)
       U__melodee_temp_007 = 0.389640000000000;
    else
-      U__melodee_temp_007 = (0.0382*V_diff + 1.0314)./(1 - 0.0708593166305464*exp(-0.0980392156862745*V_diff));
+      U__melodee_temp_007 = (0.0382*V_int + 1.0314)./(1 - 0.0708593166305464*exp(-0.0980392156862745*V_int));
    end
    alpha_p = U__melodee_temp_007;
-   U__melodee_temp_008 = abs(V_diff/10 + 17/5) < 1.0e-6;
+   U__melodee_temp_008 = abs(V_int/10 + 17/5) < 1.0e-6;
    if (U__melodee_temp_008)
       U__melodee_temp_009 = 0.00955000000000000;
    else
-      U__melodee_temp_009 = (-0.000955*V_diff - 0.03247)./(-exp(V_diff/10 + 17/5) + 1);
+      U__melodee_temp_009 = (-0.000955*V_int - 0.03247)./(-exp(V_int/10 + 17/5) + 1);
    end
    beta_p = U__melodee_temp_009;
    p_diff = -p .* beta_p + alpha_p .* (-p + 1);
-   i_K = g_K .* s .* (V_diff - E_K);
+   i_K = g_K .* s .* (V_int - E_K);
    slow_potassium_channel_I_mem_area = i_K;
-   alpha_s = 0.3348 ./ (exp(-V_diff/5 - 53/5) + 1);
-   beta_s = 0.03348 ./ (exp(-V_diff - 90) + 1);
+   alpha_s = 0.3348 ./ (exp(-V_int/5 - 53/5) + 1);
+   beta_s = 0.03348 ./ (exp(-V_int - 90) + 1);
    s_diff = -s .* beta_s + alpha_s .* (-s + 1);
-   I_out = 1000 * V_ext;
-   I_out_001 = I_out;
+   %I_out = 1000 * V_ext;
+   %I_out_001 = I_out;
    MRGHH_I_mem_area = I_mem_area + leakage_current_I_mem_area + pers_sodium_channel_I_mem_area + slow_potassium_channel_I_mem_area;
    I_mem = MRGHH_I_mem_area ./ Cm;
    I_mem_001 = I_mem;
-   V_ext_diff = -1e13 / 2 * V_ext;
-   V_int_diff = V_ext_diff - I_mem_001 + iStim_001;
+   V_ext_diff = -1e13 / 2 * V_ext + I_mem_001;
+   V_int_diff = - I_mem_001 + iStim_001;
    % stuff the differential update into an array
    U_dydt(1) = V_ext_diff;
    U_dydt(2) = V_int_diff;

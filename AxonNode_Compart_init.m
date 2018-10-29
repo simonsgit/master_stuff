@@ -10,7 +10,7 @@ function [U_y_init, U_ordering, U_params] = AxonNode_Compart_init(t,varargin)
 
    %define the initial conditions
    V_ext_init = 0;
-   V_int_init = V_ext_init - 90;
+   V_int_init = - 80;
    if (isfield(U_params, 'Cm'))
       Cm = U_params.Cm;
    else

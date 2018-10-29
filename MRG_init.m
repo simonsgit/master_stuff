@@ -2,7 +2,7 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params,intracom_params]
     [U_axon, U_ordering, U_params] = AxonNode_Compart_init(t);
     
     if naxons > 1
-        add_axon = horzcat(repmat([0;-90;0;0;0;0],1,10),U_axon);
+        add_axon = horzcat(repmat([0;-80;0;0;0;0],1,10),U_axon);
         U_y_init = horzcat(U_axon,repmat(add_axon,1,naxons-1));
         
         % calculate flux parameters
@@ -14,24 +14,26 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params,intracom_params]
         %xraxial_f = 7e5 / (pi*((((6.9/2)+0.004)^2)-((6.9/2)^2)));
         %xraxial_s = 7e5 / (pi*((((6.9/2)+0.004)^2)-((6.9/2)^2)));
         %xraxial = [xraxial_n;xraxial_m;xraxial_f;xraxial_s;xraxial_s;xraxial_s;xraxial_s;xraxial_s;xraxial_s;xraxial_f;xraxial_m;xraxial_n;xraxial_m];
-        Ra_n = 7e5;
-        Ra_m = 7e5 * (10/3.3)^2;
-        Ra_f = 7e5 * (10/6.9)^2;
-        Ra_s = 7e5 * (10/6.9)^2;
-        Ra = [Ra_n;Ra_m;Ra_f;Ra_s;Ra_s;Ra_s;Ra_s;Ra_s;Ra_s;Ra_f;Ra_m;Ra_n;Ra_m];
-        l_n = 1;
-        l_m = 3;
-        l_f = 46;
-        l_s = (1150-1-(2*3)-(2*46))/6;
-        l = [l_n;l_m;l_f;l_s;l_s;l_s;l_s;l_s;l_s;l_f;l_m;l_n;l_m];
-        d_n = 3.3;
-        d_i = 10;
+        d_n = 3.3; % diameter at Ranvier node and MYSA compartment
+        d_p = 6.9; % diameter at FLUT and STIN compartment
+        d_i = 10; % diameter of fiber
         d = [d_n;d_i;d_i;d_i;d_i;d_i;d_i;d_i;d_i;d_i;d_i;d_n;d_i];
-        c_n = 2e-8;
-        c_m = 2e-8 * (3.3/10);
-        c_f = 2e-8 * (6.9/10);
-        c_s = 2e-8 * (6.9/10);
         de = d + [0.004;0.004;0.008;0.008;0.008;0.008;0.008;0.008;0.008;0.008;0.004;0.004;0.004]; 
+        Ra_n = 7e5;
+        Ra_m = 7e5 * (d_i/d_n)^2;
+        Ra_f = 7e5 * (d_i/d_p)^2;
+        Ra_s = 7e5 * (d_i/d_p)^2;
+        Ra = [Ra_n;Ra_m;Ra_f;Ra_s;Ra_s;Ra_s;Ra_s;Ra_s;Ra_s;Ra_f;Ra_m;Ra_n;Ra_m];
+        l_n = 1; % length of Ranvier node
+        l_m = 3; % length of MYSA compartment
+        l_f = 46; % length of FLUT compartment
+        deltax = 1150; % internodal distance
+        l_s = (deltax-l_n-(2*l_m)-(2*l_f))/6; % length of STIN compartment
+        l = [l_n;l_m;l_f;l_s;l_s;l_s;l_s;l_s;l_s;l_f;l_m;l_n;l_m];
+        c_n = 2e-8;
+        c_m = 2e-8 * (d_n/d_i);
+        c_f = 2e-8 * (d_p/d_i);
+        c_s = 2e-8 * (d_p/d_i);
         cm = [c_n;c_m;c_f;c_s;c_s;c_s;c_s;c_s;c_s;c_f;c_m;c_n;c_m];
         cmxc = cm + xc;
         itaus = 1e-3.*(2*l).^2 .*Ra .*cm./d;
@@ -47,9 +49,9 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params,intracom_params]
         flux_params.ext_taus2 = vertcat((etaus2(1)+etaus2(2))./2, (etaus2(2:end) + etaus2(1:end-1))./2);
         
         % calculate intracompartment parameters
-        gpas_m = 3.3/10;
-        gpas_f = 0.1 * 3.3/10;
-        gpas_s = 0.1 * 3.3/10;
+        gpas_m = d_n/d_i;
+        gpas_f = 0.1 * d_n/d_i;
+        gpas_s = 0.1 * d_n/d_i;
         gpas = [gpas_m;gpas_f;gpas_s;gpas_s;gpas_s;gpas_s;gpas_s;gpas_s;gpas_f;gpas_m];
         intracom_params = struct();
         intracom_params.ext = (1/240) ./ (cm(2:end-2) .* 2e8 + (0.1/240)); 
@@ -64,7 +66,7 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params,intracom_params]
     activ_params.Cm = Cm;
     g_L = 7;
     activ_params.g_L = g_L;
-    offset = 10;
+    offset = 50;
     activ_params.offset = offset;
     bcl = 1000;
     activ_params.bcl = bcl;
