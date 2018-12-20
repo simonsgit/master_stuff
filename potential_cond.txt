@@ -1,0 +1,55 @@
+// Gmsh project created on Tue Sep 25 11:32:57 2018
+SetFactory("OpenCASCADE");
+
+//Set Tissue
+w = 20000;
+h = 500;
+tmsh = 125;
+
+Point(1) = {-w/2,-h/2,0,tmsh};
+Point(2) = {w/2,-h/2,0,tmsh};
+Point(3) = {w/2,h/2,0,tmsh};
+Point(4) = {-w/2,h/2,0,tmsh};
+Point(5) = {0,-h/2,0,tmsh};
+Point(6) = {0,h/2,0,tmsh};
+
+Line(1) = {1,5};
+Line(2) = {5,6};
+Line(3) = {6,4};
+Line(4) = {4,1};
+Line(5) = {5,2};
+Line(6) = {2,3};
+Line(7) = {3,6};
+
+Line Loop(1) = {1,2,3,4};
+Line Loop(2) = {5,6,7,-2};
+
+Surface(1) = {1};
+Surface(2) = {2};
+
+Physical Surface("Node", 1) = {1};
+Physical Surface("Internode", 2) = {2}; 
+
+//Set blood
+b = 1000;
+bmsh = 500;
+
+Point(5) = {-w/2,-h/2-b,0,bmsh};
+Point(6) = {w/2,-h/2-b,0,bmsh};
+Point(7) = {w/2,h/2+b,0,bmsh};
+Point(8) = {-w/2,h/2+b,0,bmsh};
+
+Line(5) = {1,5};
+Line(6) = {5,6};
+Line(7) = {6,2};
+Line(8) = {3,7};
+Line(9) = {7,8};
+Line(10) = {8,4};
+
+Line Loop(3) = {5,6,7,-1};
+Line Loop(4) = {-3,8,9,10};
+
+Surface(2) = {3};
+Surface(3) = {4};
+
+Physical Surface("Blood", 2) = {2,3};

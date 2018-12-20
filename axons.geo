@@ -1,55 +1,55 @@
 // Gmsh project created on Tue Sep 25 11:32:57 2018
 SetFactory("OpenCASCADE");
 
-Include "/Users/st18/MasterThesis/master_stuff/tissue.geo";
+Include "/Users/st18/MasterThesis/gmsh_stuff/tissue.geo";
 //+
 elec_msh = 1;
-axon_msh = 0.5;
-fasc_msh = 0.5;
+axon_msh = 0.1;
+fasc_msh = 0.1;
 peri_msh = 1;
 epi_msh = 1;
 
 // Generate Electrode
-a = newp;
-Point(a) = {elec_x[0], elec_y[0], elec_z[0], elec_msh};
-Point(a+1) = {elec_x[1], elec_y[1], elec_z[1], elec_msh};
-Point(a+2) = {elec_x[2], elec_y[2], elec_z[2], elec_msh};
-Point(a+3) = {elec_x[3], elec_y[3], elec_z[3], elec_msh};
-Point(a+4) = {elec_x[4], elec_y[4], elec_z[4], elec_msh};
-b = newc;
-Circle(b) = {a+1, a, a+2};
-Circle(b+1) = {a+2, a, a+3};
-Circle(b+2) = {a+3, a, a+4};
-Circle(b+3) = {a+4, a, a+1};
-Line Loop(b+4) = {b, b+1, b+2, b+3};
-c = newc;
-Plane Surface(c) = {b+4};
-points[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicata {Point{a};Point{a+1};Point{a+2};Point{a+3};Point{a+4};}};
-circles[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicata {Line{b};Line{b+1};Line{b+2};Line{b+3};}};
-surface[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicata {Surface{c};}};
+//a = newp;
+//Point(a) = {elec_x[0], elec_y[0], elec_z[0], elec_msh};
+//Point(a+1) = {elec_x[1], elec_y[1], elec_z[1], elec_msh};
+//Point(a+2) = {elec_x[2], elec_y[2], elec_z[2], elec_msh};
+//Point(a+3) = {elec_x[3], elec_y[3], elec_z[3], elec_msh};
+//Point(a+4) = {elec_x[4], elec_y[4], elec_z[4], elec_msh};
+//b = newc;
+//Circle(b) = {a+1, a, a+2};
+//Circle(b+1) = {a+2, a, a+3};
+//Circle(b+2) = {a+3, a, a+4};
+//Circle(b+3) = {a+4, a, a+1};
+//Line Loop(b+4) = {b, b+1, b+2, b+3};
+//c = newc;
+//Plane Surface(c) = {b+4};
+//points[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicat {Point{a};Point{a+1};Point{a+2};Point{a+3};Point{a+4};}};
+//circles[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicata {Line{b};Line{b+1};Line{b+2};Line{b+3};}};
+//surface[] = Translate {elec_extr[0], elec_extr[1], elec_extr[2]} {Duplicata {Surface{c};}};
 
-d = newc;
-Line(d) = {a+1, points[1]};
-Line(d+1) = {a+2, points[2]};
-Line(d+2) = {a+3, points[3]};
-Line(d+3) = {a+4, points[4]};
+//d = newc;
+//Line(d) = {a+1, points[1]};
+//Line(d+1) = {a+2, points[2]};
+//Line(d+2) = {a+3, points[3]};
+//Line(d+3) = {a+4, points[4]};
 
-e = newc; 
-Line Loop(e) = {b, d+1, -circles[0], -d};
-Line Loop(e+1) = {b+1, d+2, -circles[1], -(d+1)};
-Line Loop(e+2) = {b+2, d+3, -circles[2], -(d+2)};
-Line Loop(e+3) = {b+3, d, -circles[3], -(d+3)};
+//e = newc; 
+//Line Loop(e) = {b, d+1, -circles[0], -d};
+//Line Loop(e+1) = {b+1, d+2, -circles[1], -(d+1)};
+//Line Loop(e+2) = {b+2, d+3, -circles[2], -(d+2)};
+//Line Loop(e+3) = {b+3, d, -circles[3], -(d+3)};
 
-f = news;
-Surface(f) = {e};
-Surface(f+1) = {e+1};
-Surface(f+2) = {e+2};
-Surface(f+3) = {e+3};
-Surface Loop(f+4) = {c, f, f+1, f+2, f+3, surface[0]};
-g = newv;
-Volume(g) = {f+4};
+//f = news;
+//Surface(f) = {e};
+//Surface(f+1) = {e+1};
+//Surface(f+2) = {e+2};
+//Surface(f+3) = {e+3};
+//Surface Loop(f+4) = {c, f, f+1, f+2, f+3, surface[0]};
+//g = newv;
+//Volume(g) = {f+4};
 //elec[] = Extrude {elec_extr[0], elec_extr[1], elec_extr[2]} {Surface{c};};
-Physical Volume("Electrode", newv) = {g};
+//Physical Volume("Electrode", newv) = {g};
 
 For m In {1:NoF}
 	Printf("Fascicle No. %g", m);
@@ -98,7 +98,7 @@ For m In {1:NoF}
 
 	//Generate Perineurium
 	peri_d = fasc_rad[m]*3/100;
-	peri_msh = peri_d/2;
+	peri_msh = 0.5;
 	r = newp;
 	//+
 	Point(r) = {fasc_x[m], fasc_y[m], fasc_z[m], peri_msh};
@@ -177,5 +177,6 @@ Printf(" epi %g", z+2);
 
 Surface Loop(z+4) = {w, z, z+1, z+2, z+3, nsurface[0], peri_wal[]};
 h = newv;
-Volume(h) = {z+4, f+4};
+//Volume(h) = {z+4, f+4};
+Volume(h) = {z+4};
 Physical Volume("Epineurium", newv) = {h};

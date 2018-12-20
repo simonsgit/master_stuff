@@ -60,5 +60,4 @@ function U_dydt = MRG_diff(t,y,U_params,activ_params,flux_params,intracom_params
     else
         U_dydt = AxonNode_Compart(t,y,activ_params);
     end
-
 end

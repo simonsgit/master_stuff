@@ -2,12 +2,12 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params,intracom_params]
     [U_axon, U_ordering, U_params] = AxonNode_Compart_init(t);
     
     if naxons > 1
-        add_axon = horzcat(repmat([0;-80;0;0;0;0],1,10),U_axon);
+        add_axon = horzcat(repmat([0;-89;0;0;0;0],1,10),U_axon);
         U_y_init = horzcat(U_axon,repmat(add_axon,1,naxons-1));
         
         % calculate flux parameters
-        xc_n = 0;
-        xc_in = 1e-9 / 240;
+        xc_n = 0; % capacitance of the extracellular layer at the Ranvier node
+        xc_in = 1e-9 / 240; % capacitance of the extracellular level at the internodal compartment
         xc = [xc_n;xc_in;xc_in;xc_in;xc_in;xc_in;xc_in;xc_in;xc_in;xc_in;xc_in;xc_n;xc_in];
         %xraxial_n = 7e5 / (pi*((((3.3/2)+0.002)^2)-((3.3/2)^2)));
         %xraxial_m = 7e5 / (pi*((((3.3/2)+0.002)^2)-((3.3/2)^2)));
@@ -19,21 +19,21 @@ function [U_y_init,U_ordering,U_params,activ_params,flux_params,intracom_params]
         d_i = 10; % diameter of fiber
         d = [d_n;d_i;d_i;d_i;d_i;d_i;d_i;d_i;d_i;d_i;d_i;d_n;d_i];
         de = d + [0.004;0.004;0.008;0.008;0.008;0.008;0.008;0.008;0.008;0.008;0.004;0.004;0.004]; 
-        Ra_n = 7e5;
+        Ra_n = 7e5; 
         Ra_m = 7e5 * (d_i/d_n)^2;
         Ra_f = 7e5 * (d_i/d_p)^2;
         Ra_s = 7e5 * (d_i/d_p)^2;
         Ra = [Ra_n;Ra_m;Ra_f;Ra_s;Ra_s;Ra_s;Ra_s;Ra_s;Ra_s;Ra_f;Ra_m;Ra_n;Ra_m];
-        l_n = 1; % length of Ranvier node
-        l_m = 3; % length of MYSA compartment
-        l_f = 46; % length of FLUT compartment
-        deltax = 1150; % internodal distance
-        l_s = (deltax-l_n-(2*l_m)-(2*l_f))/6; % length of STIN compartment
+        l_n = 1;        % length of Ranvier node
+        l_m = 3;        % length of MYSA compartment
+        l_f = 46;       % length of FLUT compartment
+        deltax = 1150;      % internodal distance
+        l_s = (deltax-l_n-(2*l_m)-(2*l_f))/6;       % length of STIN compartment
         l = [l_n;l_m;l_f;l_s;l_s;l_s;l_s;l_s;l_s;l_f;l_m;l_n;l_m];
-        c_n = 2e-8;
-        c_m = 2e-8 * (d_n/d_i);
-        c_f = 2e-8 * (d_p/d_i);
-        c_s = 2e-8 * (d_p/d_i);
+        c_n = 2e-8;                     % membrane capacitance at the Ranvier node
+        c_m = 2e-8 * (d_n/d_i);         % membrane capacitance at the MYSA compartment
+        c_f = 2e-8 * (d_p/d_i);         % membrane capacitance at the FLUT compartment
+        c_s = 2e-8 * (d_p/d_i);         % membrane capacitance at the STIN compartment
         cm = [c_n;c_m;c_f;c_s;c_s;c_s;c_s;c_s;c_s;c_f;c_m;c_n;c_m];
         cmxc = cm + xc;
         itaus = 1e-3.*(2*l).^2 .*Ra .*cm./d;
